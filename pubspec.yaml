@@ -1,0 +1,24 @@
+name: auto_manager
+description: "Vehicle management and auto loan calculator."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  sqflite: ^2.3.3+1
+  sqflite_common_ffi: ^2.3.0+2
+  path: ^1.9.0
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
