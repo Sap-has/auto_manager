@@ -107,12 +107,10 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
           _fieldRow('torque', 'Torque', _vehicle.torque != null ? '${_vehicle.torque} lb-ft' : null),
           _fieldRow('torqueRpm', 'Torque @ RPM', _vehicle.torqueRpm != null ? '${_vehicle.torqueRpm} rpm' : null),
 
-          if (_vehicle.engineType == 'Hybrid' || _vehicle.engineType == 'Plug-in Hybrid' || _vehicle.engineType == 'Electric') ...[
-            _section('Electric Motor', context),
-            _fieldRow('motorHp', 'Motor HP', _vehicle.motorHp != null ? '${_vehicle.motorHp} hp' : null),
-            _fieldRow('motorTorque', 'Motor Torque', _vehicle.motorTorque != null ? '${_vehicle.motorTorque} lb-ft' : null),
-          ],
-
+          _section('Electric Motor', context),
+          _fieldRow('motorHp', 'Motor HP', _vehicle.motorHp != null ? '${_vehicle.motorHp} hp' : null),
+          _fieldRow('motorTorque', 'Motor Torque', _vehicle.motorTorque != null ? '${_vehicle.motorTorque} lb-ft' : null),
+          
           _section('Performance & Fuel', context),
           _fieldRow('zeroToSixty', '0-60 mph', _vehicle.zeroToSixty != null ? '${_vehicle.zeroToSixty}s' : null),
           _fieldRow('mpgCity', 'MPG City', _vehicle.mpgCity?.toString()),
