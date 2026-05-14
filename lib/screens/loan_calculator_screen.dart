@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import '../models/vehicle.dart';
 import '../models/loan_config.dart';
 import '../services/database_service.dart';
-import 'loan_compare_screen.dart';
 
 class LoanCalculatorScreen extends StatefulWidget {
   final Vehicle? preloadVehicle;
@@ -24,7 +23,6 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
   final _feesCtrl = TextEditingController();
 
   int _termMonths = 60;
-  List<Vehicle> _vehicles = [];
   Vehicle? _selectedVehicle;
   LoanConfig? _result;
   bool _showByYear = true;
@@ -51,7 +49,6 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
 
   Future<void> _loadVehicles() async {
     final data = await DatabaseService.getVehicles();
-    setState(() => _vehicles = data);
     if (widget.preloadVehicle != null) {
       setState(() {
         _selectedVehicle = data.firstWhere(
@@ -82,9 +79,11 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
     if (_result == null) return;
     if (widget.existingConfig?.id != null) {
       await DatabaseService.updateLoanConfig(_result!.copyWith(id: widget.existingConfig!.id));
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Loan updated')));
     } else {
       await DatabaseService.insertLoanConfig(_result!);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Loan saved')));
     }
   }
@@ -137,7 +136,7 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
 
               return DropdownButtonFormField<Vehicle>(
                 isExpanded: true,
-                value: _selectedVehicle == null
+                initialValue: _selectedVehicle == null
                     ? null 
                     : vehicles.firstWhere(
                         (v) => v.id == _selectedVehicle!.id, 
@@ -312,7 +311,7 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(formula, style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
@@ -321,7 +320,7 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(withNums, style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
@@ -546,7 +545,7 @@ class _LineChartPainter extends CustomPainter {
     double yOf(double v) => pad.top + h - (v / maxY) * h;
 
     final gridPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..strokeWidth = 1;
     for (int i = 0; i <= 4; i++) {
       final y = pad.top + (i / 4) * h;
@@ -582,7 +581,9 @@ class _LineChartPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round;
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
-      for (final pt in pts.skip(1)) path.lineTo(pt.dx, pt.dy);
+      for (final pt in pts.skip(1)) {
+        path.lineTo(pt.dx, pt.dy);
+      }
       canvas.drawPath(path, paint);
     }
 

@@ -75,7 +75,9 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
 
   @override
   void dispose() {
-    for (final c in _ctrl.values) c.dispose();
+    for (final c in _ctrl.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -195,7 +197,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
         children: [
           Expanded(
             child: DropdownButtonFormField<String>(
-              value: value,
+              initialValue: value,
               decoration: InputDecoration(labelText: label, filled: true),
               items: [
                 DropdownMenuItem(value: null, child: Text('Select $label')),

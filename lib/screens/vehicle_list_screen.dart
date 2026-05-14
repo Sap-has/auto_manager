@@ -169,7 +169,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _filterType,
+                  initialValue: _filterType,
                   decoration: const InputDecoration(labelText: 'Type', isDense: true),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('All Types')),
@@ -184,7 +184,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _filterDrivetrain,
+                  initialValue: _filterDrivetrain,
                   decoration: const InputDecoration(labelText: 'Drivetrain', isDense: true),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('All')),
@@ -219,8 +219,8 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
               )
             : CircleAvatar(
                 backgroundColor: missing > 0
-                    ? Colors.orange.withOpacity(0.2)
-                    : Colors.green.withOpacity(0.2),
+                    ? Colors.orange.withValues(alpha: 0.2)
+                    : Colors.green.withValues(alpha: 0.2),
                 child: Icon(
                   missing > 0 ? Icons.warning_amber : Icons.check_circle,
                   color: missing > 0 ? Colors.orange : Colors.green,
