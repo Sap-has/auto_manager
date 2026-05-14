@@ -208,6 +208,13 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     final missing = v.missingFieldCount;
     final isSelected = _selected.contains(v.id);
 
+    String performance = '';
+    if (v.horsepower != null || v.torque != null) {
+      final hp = v.horsepower?.toString() ?? '—';
+      final tq = v.torque?.toString() ?? '—';
+      performance = ' · $hp hp / $tq lb-ft';
+    }
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       color: isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
@@ -232,7 +239,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (v.vehicleType != null || v.drivetrain != null)
-              Text('${v.vehicleType ?? ''}${v.drivetrain != null ? ' · ${v.drivetrain}' : ''}'),
+              Text('${v.vehicleType ?? ''}${v.drivetrain != null ? ' · ${v.drivetrain}' : ''}$performance'),
             if (missing > 0)
               Text(
                 '$missing field${missing == 1 ? '' : 's'} missing',
