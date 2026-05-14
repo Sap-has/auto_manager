@@ -276,12 +276,10 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
             _field('torque', 'Torque (lb-ft)', type: TextInputType.number),
             _field('torqueRpm', 'Torque @ RPM', type: TextInputType.number),
 
-            if (_engineType == 'Hybrid' || _engineType == 'Plug-in Hybrid' || _engineType == 'Electric') ...[
-              _section('Electric Motor'),
-              _field('motorHp', 'Motor HP', type: TextInputType.number),
-              _field('motorTorque', 'Motor Torque (lb-ft)', type: TextInputType.number),
-            ],
-
+            _section('Electric Motor'),
+            _field('motorHp', 'Motor HP', type: TextInputType.number),
+            _field('motorTorque', 'Motor Torque (lb-ft)', type: TextInputType.number),
+            
             _section('Performance & Fuel'),
             _field('zeroToSixty', '0-60 mph (sec)', type: TextInputType.number),
             _field('mpgCity', 'MPG City', type: TextInputType.number),
