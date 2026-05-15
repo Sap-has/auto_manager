@@ -13,7 +13,7 @@ class DatabaseService {
     final path = join(await getDatabasesPath(), 'auto_manager.db');
     _db = await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -83,41 +83,11 @@ class DatabaseService {
   }
 
   static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      final cols = await db.rawQuery("PRAGMA table_info(vehicles)");
-      final existing = cols.map((c) => c['name'] as String).toSet();
-      final newCols = {
-        'engineSize': 'REAL', 'engineConfig': 'TEXT', 'cylinders': 'INTEGER',
-        'horsepower': 'INTEGER', 'hpRpm': 'INTEGER', 'torque': 'INTEGER',
-        'torqueRpm': 'INTEGER', 'engineType': 'TEXT', 'motorHp': 'REAL',
-        'motorTorque': 'REAL', 'towCapacity': 'INTEGER', 'bedSize': 'TEXT',
-        'payloadCapacity': 'REAL', 'mpgCity': 'REAL', 'mpgHwy': 'REAL',
-        'mpgCombined': 'REAL', 'gasTankSize': 'REAL', 'numDoors': 'INTEGER',
-        'numSeats': 'INTEGER', 'drivetrain': 'TEXT', 'vehicleType': 'TEXT',
-        'zeroToSixty': 'REAL', 'enginePlacement': 'TEXT',
-        'notNecessary': "TEXT DEFAULT ''",
-      };
-      for (final entry in newCols.entries) {
-        if (!existing.contains(entry.key)) {
-          await db.execute('ALTER TABLE vehicles ADD COLUMN ${entry.key} ${entry.value}');
-        }
-      }
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS loan_configs(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL,
-          vehicleId INTEGER,
-          vehicleName TEXT,
-          vehiclePrice REAL NOT NULL,
-          loanTermMonths INTEGER NOT NULL,
-          annualInterestRate REAL NOT NULL,
-          downPayment REAL NOT NULL,
-          salesTaxRate REAL NOT NULL,
-          otherFees REAL NOT NULL
-        )
-      ''');
-    }
+  if (oldVersion < 4) {
+    await db.execute('ALTER TABLE vehicles ADD COLUMN hpRpmMax INTEGER');
+    await db.execute('ALTER TABLE vehicles ADD COLUMN torqueRpmMax INTEGER');
   }
+}
 
   // Vehicles
   static Future<int> insertVehicle(Vehicle vehicle) async {

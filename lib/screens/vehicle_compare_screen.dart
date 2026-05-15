@@ -44,9 +44,13 @@ class VehicleCompareScreen extends StatelessWidget {
       case 'engineSize': return v.engineSize != null ? '${v.engineSize}L' : '—';
       case 'cylinders': return v.cylinders?.toString() ?? '—';
       case 'horsepower': return v.horsepower != null ? '${v.horsepower} hp' : '—';
-      case 'hpRpm': return v.hpRpm != null ? '${v.hpRpm} rpm' : '—';
+      case 'hpRpm':
+        final val = v.hpRpmMax != null ? '${v.hpRpm}-${v.hpRpmMax}' : '${v.hpRpm}';
+        return v.hpRpm != null ? '$val rpm' : '—';
       case 'torque': return v.torque != null ? '${v.torque} lb-ft' : '—';
-      case 'torqueRpm': return v.torqueRpm != null ? '${v.torqueRpm} rpm' : '—';
+      case 'torqueRpm':
+        final val = v.torqueRpmMax != null ? '${v.torqueRpm}-${v.torqueRpmMax}' : '${v.torqueRpm}';
+        return v.torqueRpm != null ? '$val rpm' : '—';
       case 'motorHp': return v.motorHp != null ? '${v.motorHp} hp' : '—';
       case 'motorTorque': return v.motorTorque != null ? '${v.motorTorque} lb-ft' : '—';
       case 'zeroToSixty': return v.zeroToSixty != null ? '${v.zeroToSixty}s' : '—';

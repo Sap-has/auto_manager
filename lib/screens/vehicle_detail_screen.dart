@@ -103,9 +103,9 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
           _fieldRow('engineSize', 'Engine Size', _vehicle.engineSize != null ? '${_vehicle.engineSize}L' : null),
           _fieldRow('cylinders', 'Cylinders', _vehicle.cylinders?.toString()),
           _fieldRow('horsepower', 'Horsepower', _vehicle.horsepower != null ? '${_vehicle.horsepower} hp' : null),
-          _fieldRow('hpRpm', 'HP @ RPM', _vehicle.hpRpm != null ? '${_vehicle.hpRpm} rpm' : null),
+          _fieldRow('hpRpm', 'HP @ RPM', _formatRpm(_vehicle.hpRpm, _vehicle.hpRpmMax)),
           _fieldRow('torque', 'Torque', _vehicle.torque != null ? '${_vehicle.torque} lb-ft' : null),
-          _fieldRow('torqueRpm', 'Torque @ RPM', _vehicle.torqueRpm != null ? '${_vehicle.torqueRpm} rpm' : null),
+          _fieldRow('torqueRpm', 'Torque @ RPM', _formatRpm(_vehicle.torqueRpm, _vehicle.torqueRpmMax)),
 
           _section('Electric Motor', context),
           _fieldRow('motorHp', 'Motor HP', _vehicle.motorHp != null ? '${_vehicle.motorHp} hp' : null),
@@ -189,5 +189,11 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
         ],
       ),
     );
+  }
+  
+  String? _formatRpm(int? min, int? max) {
+    if (min == null && max == null) return '—';
+    if (min != null && max != null) return '$min - $max rpm';
+    return '${min ?? max} rpm';
   }
 }
