@@ -10,8 +10,10 @@ class Vehicle {
   final int? cylinders;
   final int? horsepower;
   final int? hpRpm;
+  final int? hpRpmMax;
   final int? torque;
   final int? torqueRpm;
+  final int? torqueRpmMax;
   final String? engineType;
   final double? motorHp;
   final double? motorTorque;
@@ -43,8 +45,10 @@ class Vehicle {
     this.cylinders,
     this.horsepower,
     this.hpRpm,
+    this.hpRpmMax,
     this.torque,
     this.torqueRpm,
+    this.torqueRpmMax,
     this.engineType,
     this.motorHp,
     this.motorTorque,
@@ -68,8 +72,8 @@ class Vehicle {
   String get title => '$year $make $model $trim';
 
   static const List<String> optionalFields = [
-    'engineSize', 'engineConfig', 'cylinders', 'horsepower', 'hpRpm',
-    'torque', 'torqueRpm', 'engineType', 'motorHp', 'motorTorque',
+    'engineSize', 'engineConfig', 'cylinders', 'horsepower', 'hpRpm', 'hpRpmMax',
+    'torque', 'torqueRpm', 'torqueRpmMax', 'engineType', 'motorHp', 'motorTorque',
     'towCapacity', 'bedSize', 'payloadCapacity', 'mpgCity', 'mpgHwy',
     'mpgCombined', 'gasTankSize', 'numDoors', 'numSeats', 'drivetrain',
     'vehicleType', 'zeroToSixty', 'enginePlacement', 'price', 'transmission',
@@ -81,8 +85,10 @@ class Vehicle {
     'cylinders': 'Cylinders',
     'horsepower': 'Horsepower',
     'hpRpm': 'HP @ RPM',
+    'hpRpmMax' : 'HP @ RPM Max',
     'torque': 'Torque (lb-ft)',
     'torqueRpm': 'Torque @ RPM',
+    'torqueRpmMax': 'Torque @ RPM Max',
     'engineType': 'Engine Type',
     'motorHp': 'Motor HP',
     'motorTorque': 'Motor Torque',
@@ -112,8 +118,10 @@ class Vehicle {
       case 'cylinders': return cylinders == null;
       case 'horsepower': return horsepower == null;
       case 'hpRpm': return hpRpm == null;
+      case 'hpRpmMax': return hpRpmMax == null;
       case 'torque': return torque == null;
       case 'torqueRpm': return torqueRpm == null;
+      case 'torqueRpmMax': return torqueRpmMax == null;
       case 'engineType': return engineType == null;
       case 'motorHp': return motorHp == null;
       case 'motorTorque': return motorTorque == null;
@@ -153,8 +161,10 @@ class Vehicle {
       'cylinders': cylinders,
       'horsepower': horsepower,
       'hpRpm': hpRpm,
+      'hpRpmMax': hpRpmMax,
       'torque': torque,
       'torqueRpm': torqueRpm,
+      'torqueRpmMax': torqueRpmMax,
       'engineType': engineType,
       'motorHp': motorHp,
       'motorTorque': motorTorque,
@@ -199,8 +209,10 @@ class Vehicle {
       cylinders: map['cylinders'],
       horsepower: map['horsepower'],
       hpRpm: map['hpRpm'],
+      hpRpmMax: map['hpRpmMax'],
       torque: map['torque'],
       torqueRpm: map['torqueRpm'],
+      torqueRpmMax: map['torqueRpmMax'],
       engineType: map['engineType'],
       motorHp: map['motorHp'],
       motorTorque: map['motorTorque'],
@@ -234,8 +246,10 @@ class Vehicle {
     int? cylinders,
     int? horsepower,
     int? hpRpm,
+    int? hpRpmMax,
     int? torque,
     int? torqueRpm,
+    int? torqueRpmMax,
     String? engineType,
     double? motorHp,
     double? motorTorque,
@@ -267,8 +281,10 @@ class Vehicle {
       cylinders: cylinders ?? this.cylinders,
       horsepower: horsepower ?? this.horsepower,
       hpRpm: hpRpm ?? this.hpRpm,
+      hpRpmMax: hpRpmMax ?? this.hpRpmMax,
       torque: torque ?? this.torque,
       torqueRpm: torqueRpm ?? this.torqueRpm,
+      torqueRpmMax: torqueRpmMax ?? this.torqueRpmMax,
       engineType: engineType ?? this.engineType,
       motorHp: motorHp ?? this.motorHp,
       motorTorque: motorTorque ?? this.motorTorque,
