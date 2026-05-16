@@ -25,7 +25,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
     'Compact Truck', 'Midsize Truck', 'Full Size Truck', 'Heavy Duty Truck',
     'Minivan', 'Van', 'Sports Car', 'Muscle Car', 'Supercar', 'Other',
   ];
-  static const _transmissions = ['Automatic', 'Manual', 'CVT', 'Dual-Clutch'];
+  static const _transmissions = ['Automatic', 'Manual', 'CVT', 'IVT', 'Dual-Clutch'];
 
   String? _drivetrain;
   String? _engineType;
