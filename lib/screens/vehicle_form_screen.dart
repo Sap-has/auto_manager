@@ -33,6 +33,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
   String? _enginePlacement;
   String? _vehicleType;
   String? _transmission;
+  bool _isNew = true;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
     _enginePlacement = v?.enginePlacement;
     _vehicleType = v?.vehicleType;
     _transmission = v?.transmission;
+    _isNew = v?.isNew ?? true;
 
     _ctrl = {
       'year': TextEditingController(text: v?.year.toString() ?? ''),
@@ -52,6 +54,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
       'model': TextEditingController(text: v?.model ?? ''),
       'trim': TextEditingController(text: v?.trim ?? ''),
       'price': TextEditingController(text: v?.price?.toString() ?? ''),
+      'mileage': TextEditingController(text: v?.mileage?.toString() ?? ''),
       'engineSize': TextEditingController(text: v?.engineSize?.toString() ?? ''),
       'cylinders': TextEditingController(text: v?.cylinders?.toString() ?? ''),
       'horsepower': TextEditingController(text: v?.horsepower?.toString() ?? ''),
@@ -93,6 +96,8 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
       model: _ctrl['model']!.text,
       trim: _ctrl['trim']!.text,
       price: double.tryParse(_ctrl['price']!.text),
+      isNew: _isNew,
+      mileage: int.tryParse(_ctrl['mileage']!.text),
       engineSize: double.tryParse(_ctrl['engineSize']!.text),
       engineConfig: _engineConfig,
       cylinders: int.tryParse(_ctrl['cylinders']!.text),
@@ -256,12 +261,40 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
             _field('trim', 'Trim', required: true),
             _field('price', 'Price (MSRP)', type: TextInputType.number),
 
+            _section('Condition'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: SegmentedButton<bool>(
+                selected: {_isNew},
+                segments: const [
+                  ButtonSegment(value: true, label: Text('New')),
+                  ButtonSegment(value: false, label: Text('Used')),
+                ],
+                onSelectionChanged: (s) => setState(() {
+                  _isNew = s.first;
+                  if (_isNew) _ctrl['mileage']!.clear();
+                }),
+              ),
+            ),
+            if (!_isNew)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: TextFormField(
+                  controller: _ctrl['mileage'],
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Mileage',
+                    filled: true,
+                  ),
+                ),
+              ),
+
             _section('Vehicle Info'),
             _dropdown('Vehicle Type', _vehicleType, _vehicleTypes, 'vehicleType',
                 (v) => setState(() => _vehicleType = v)),
             _dropdown('Drivetrain', _drivetrain, _drivetrains, 'drivetrain',
                 (v) => setState(() => _drivetrain = v)),
-            _dropdown('Transmission', _transmission, _transmissions, 'transmission', 
+            _dropdown('Transmission', _transmission, _transmissions, 'transmission',
                 (v) => setState(() => _transmission = v)),
             _field('numDoors', 'Number of Doors', type: TextInputType.number),
             _field('numSeats', 'Number of Seats', type: TextInputType.number),
@@ -285,7 +318,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
             _section('Electric Motor'),
             _field('motorHp', 'Motor HP', type: TextInputType.number),
             _field('motorTorque', 'Motor Torque (lb-ft)', type: TextInputType.number),
-            
+
             _section('Performance & Fuel'),
             _field('zeroToSixty', '0-60 mph (sec)', type: TextInputType.number),
             _field('mpgCity', 'MPG City', type: TextInputType.number),

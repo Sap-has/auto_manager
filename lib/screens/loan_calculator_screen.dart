@@ -30,7 +30,6 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    _loadVehicles();
     final ec = widget.existingConfig;
     if (ec != null) {
       _nameCtrl.text = ec.name;
@@ -40,23 +39,27 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
       _taxCtrl.text = ec.salesTaxRate.toString();
       _feesCtrl.text = ec.otherFees.toString();
       _termMonths = ec.loanTermMonths;
+      _result = ec;
     } else if (widget.preloadVehicle != null) {
       final v = widget.preloadVehicle!;
       _priceCtrl.text = v.price?.toString() ?? '';
       _nameCtrl.text = v.title;
     }
+    _loadVehicles();
   }
 
   Future<void> _loadVehicles() async {
     final data = await DatabaseService.getVehicles();
-    if (widget.preloadVehicle != null) {
-      setState(() {
-        _selectedVehicle = data.firstWhere(
-          (v) => v.id == widget.preloadVehicle!.id,
-          orElse: () => widget.preloadVehicle!,
-        );
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      if (widget.preloadVehicle != null) {
+        final match = data.where((v) => v.id == widget.preloadVehicle!.id);
+        _selectedVehicle = match.isNotEmpty ? match.first : null;
+      } else if (widget.existingConfig?.vehicleId != null) {
+        final match = data.where((v) => v.id == widget.existingConfig!.vehicleId);
+        _selectedVehicle = match.isNotEmpty ? match.first : null;
+      }
+    });
   }
 
   void _calculate() {
@@ -134,21 +137,29 @@ class _LoanCalculatorScreenState extends State<LoanCalculatorScreen> {
 
               final vehicles = snapshot.data!;
 
+              final selectedInList = _selectedVehicle != null
+                  ? vehicles.where((v) => v.id == _selectedVehicle!.id)
+                  : <Vehicle>[];
+              final effectiveSelected = selectedInList.isNotEmpty
+                  ? selectedInList.first
+                  : null;
+
+              if (effectiveSelected == null && _selectedVehicle != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) setState(() => _selectedVehicle = null);
+                });
+              }
+
               return DropdownButtonFormField<Vehicle>(
                 isExpanded: true,
-                initialValue: _selectedVehicle == null
-                    ? null 
-                    : vehicles.firstWhere(
-                        (v) => v.id == _selectedVehicle!.id, 
-                        orElse: () => _selectedVehicle!,
-                      ),
+                value: effectiveSelected,
                 decoration: const InputDecoration(labelText: 'Vehicle (optional)', filled: true),
                 items: [
                   const DropdownMenuItem(value: null, child: Text('Custom / None')),
                   ...vehicles.map((v) => DropdownMenuItem(
                         value: v,
                         child: Text(
-                          v.title, 
+                          v.title,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
