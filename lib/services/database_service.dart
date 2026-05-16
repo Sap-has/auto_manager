@@ -8,16 +8,18 @@ class DatabaseService {
   static Database? _db;
 
   static final _vehicleStreamController = StreamController<List<Vehicle>>.broadcast();
+  static final _loanStreamController = StreamController<List<LoanConfig>>.broadcast();
 
   static Future<void> initialize() async {
     final path = join(await getDatabasesPath(), 'auto_manager.db');
     _db = await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
     _notifyVehicles();
+    _notifyLoans();
   }
 
   static Future<void> _onCreate(Database db, int version) async {
@@ -77,57 +79,75 @@ class DatabaseService {
     _vehicleStreamController.add(vehicles);
   }
 
+    static Future<void> _notifyLoans() async {
+    final loans = await getLoanConfigs();
+    _loanStreamController.add(loans);
+  }
+
   static Stream<List<Vehicle>> getVehiclesStream() async* {
     yield await getVehicles();
     yield* _vehicleStreamController.stream;
   }
 
-  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-  if (oldVersion < 4) {
-    await db.execute('ALTER TABLE vehicles ADD COLUMN hpRpmMax INTEGER');
-    await db.execute('ALTER TABLE vehicles ADD COLUMN torqueRpmMax INTEGER');
+    static Stream<List<LoanConfig>> getLoanConfigsStream() async* {
+    yield await getLoanConfigs();
+    yield* _loanStreamController.stream;
   }
-}
+
+  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 4) {
+      await db.execute('ALTER TABLE vehicles ADD COLUMN hpRpmMax INTEGER');
+      await db.execute('ALTER TABLE vehicles ADD COLUMN torqueRpmMax INTEGER');
+    }
+    if (oldVersion < 5) {
+      await db.execute('ALTER TABLE vehicles ADD COLUMN isNew INTEGER NOT NULL DEFAULT 1');
+      await db.execute('ALTER TABLE vehicles ADD COLUMN mileage INTEGER');
+    }
+  }
 
   // Vehicles
   static Future<int> insertVehicle(Vehicle vehicle) async {
     final map = Map<String, dynamic>.from(vehicle.toMap())..remove('id');
+    final id = await _db!.insert('vehicles', map);
     _notifyVehicles();
-    return await _db!.insert('vehicles', map);
+    return id;
   }
-
+ 
   static Future<void> updateVehicle(Vehicle vehicle) async {
-  await _db!.update(
-    'vehicles',
-    vehicle.toMap()..remove('id'),
-    where: 'id = ?',
-    whereArgs: [vehicle.id],
-  );
-  _notifyVehicles();
-}
-
+    await _db!.update(
+      'vehicles',
+      vehicle.toMap()..remove('id'),
+      where: 'id = ?',
+      whereArgs: [vehicle.id],
+    );
+    _notifyVehicles();
+  }
+ 
   static Future<List<Vehicle>> getVehicles() async {
     final maps = await _db!.query('vehicles', orderBy: 'year DESC, make ASC');
     return maps.map((e) => Vehicle.fromMap(e)).toList();
   }
-
+ 
   static Future<Vehicle?> getVehicle(int id) async {
     final maps = await _db!.query('vehicles', where: 'id = ?', whereArgs: [id]);
     if (maps.isEmpty) return null;
     return Vehicle.fromMap(maps.first);
   }
-
+ 
   static Future<void> deleteVehicle(int id) async {
     await _db!.delete('vehicles', where: 'id = ?', whereArgs: [id]);
     _notifyVehicles();
   }
 
+
   // Loan Configs
   static Future<int> insertLoanConfig(LoanConfig config) async {
     final map = Map<String, dynamic>.from(config.toMap())..remove('id');
-    return await _db!.insert('loan_configs', map);
+    final id = await _db!.insert('loan_configs', map);
+    _notifyLoans();
+    return id;
   }
-
+ 
   static Future<void> updateLoanConfig(LoanConfig config) async {
     await _db!.update(
       'loan_configs',
@@ -135,14 +155,16 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [config.id],
     );
+    _notifyLoans();
   }
-
+ 
   static Future<List<LoanConfig>> getLoanConfigs() async {
     final maps = await _db!.query('loan_configs', orderBy: 'name ASC');
     return maps.map((e) => LoanConfig.fromMap(e)).toList();
   }
-
+ 
   static Future<void> deleteLoanConfig(int id) async {
     await _db!.delete('loan_configs', where: 'id = ?', whereArgs: [id]);
+    _notifyLoans();
   }
 }

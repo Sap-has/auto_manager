@@ -92,6 +92,27 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   List<String> get _allDrivetrains =>
       _all.map((v) => v.drivetrain).whereType<String>().toSet().toList()..sort();
 
+  String _subtitleLine(Vehicle v) {
+    final parts = <String>[];
+    if (v.vehicleType != null || v.drivetrain != null) {
+      final vt = v.vehicleType ?? '';
+      final dt = v.drivetrain != null ? ' · ${v.drivetrain}' : '';
+      parts.add('$vt$dt');
+    }
+    if (v.horsepower != null || v.torque != null) {
+      final hp = v.horsepower?.toString() ?? '—';
+      final tq = v.torque?.toString() ?? '—';
+      parts.add('$hp hp / $tq lb-ft');
+    }
+    final conditionParts = <String>[v.isNew ? 'New' : 'Used'];
+    if (!v.isNew && v.mileage != null) {
+      final miles = (v.mileage! / 1000).toStringAsFixed(1);
+      conditionParts.add('${miles}k mi');
+    }
+    parts.add(conditionParts.join(' · '));
+    return parts.join(' · ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,13 +229,6 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     final missing = v.missingFieldCount;
     final isSelected = _selected.contains(v.id);
 
-    String performance = '';
-    if (v.horsepower != null || v.torque != null) {
-      final hp = v.horsepower?.toString() ?? '—';
-      final tq = v.torque?.toString() ?? '—';
-      performance = ' · $hp hp / $tq lb-ft';
-    }
-
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       color: isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
@@ -238,8 +252,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (v.vehicleType != null || v.drivetrain != null)
-              Text('${v.vehicleType ?? ''}${v.drivetrain != null ? ' · ${v.drivetrain}' : ''}$performance'),
+            Text(_subtitleLine(v)),
             if (missing > 0)
               Text(
                 '$missing field${missing == 1 ? '' : 's'} missing',

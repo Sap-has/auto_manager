@@ -5,6 +5,8 @@ class Vehicle {
   final String model;
   final String trim;
   final double? price;
+  final bool isNew;
+  final int? mileage;
   final double? engineSize;
   final String? engineConfig;
   final int? cylinders;
@@ -40,6 +42,8 @@ class Vehicle {
     required this.model,
     required this.trim,
     this.price,
+    this.isNew = true,
+    this.mileage,
     this.engineSize,
     this.engineConfig,
     this.cylinders,
@@ -156,6 +160,8 @@ class Vehicle {
       'model': model,
       'trim': trim,
       'price': price,
+      'isNew': isNew ? 1 : 0,
+      'mileage': mileage,
       'engineSize': engineSize,
       'engineConfig': engineConfig,
       'cylinders': cylinders,
@@ -204,6 +210,8 @@ class Vehicle {
       model: map['model'],
       trim: map['trim'],
       price: map['price'],
+      isNew: (map['isNew'] as int? ?? 1) == 1,
+      mileage: map['mileage'],
       engineSize: map['engineSize'],
       engineConfig: map['engineConfig'],
       cylinders: map['cylinders'],
@@ -234,13 +242,15 @@ class Vehicle {
     );
   }
 
-  Vehicle copyWith({
+    Vehicle copyWith({
     int? id,
     int? year,
     String? make,
     String? model,
     String? trim,
     double? price,
+    bool? isNew,
+    int? mileage,
     double? engineSize,
     String? engineConfig,
     int? cylinders,
@@ -276,6 +286,8 @@ class Vehicle {
       model: model ?? this.model,
       trim: trim ?? this.trim,
       price: price ?? this.price,
+      isNew: isNew ?? this.isNew,
+      mileage: mileage ?? this.mileage,
       engineSize: engineSize ?? this.engineSize,
       engineConfig: engineConfig ?? this.engineConfig,
       cylinders: cylinders ?? this.cylinders,
